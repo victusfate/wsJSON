@@ -58,10 +58,7 @@ wss.on('messageJson', (data) => {
 })
 
 
-const ws = new wsJson.WebSocketJSONClient({ socketUrl: sSocketUrl, token: sToken });
-ws.on('open', () => {
-  ws.sendJson({ type: 'test', data: { some: 'info', anArray: [0,1,2,3]}});
-  ws.on('messageJson', (data) => {
-    console.log({ action: 'ws.messageJson', data: data });
-  })    
-})
+/*
+// if you want to test server and client together
+require('./test-client')
+*/

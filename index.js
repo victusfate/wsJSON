@@ -51,6 +51,12 @@ function normalizePort(val) {
         }
       });
       this.sendJson(ws,{ type: sAction + '.ws.on.connection.send', data: `server sending date ${Date.now()}` })
+      .then( () => {
+        // send success
+      })
+      .catch( err => {
+        console.error({ action: sAction + '.ws.on.connection.send.err', err: err })
+      })
     });
 
     this.wss.on('error', (err) => {
@@ -62,7 +68,16 @@ function normalizePort(val) {
 
   // payload format: { type: 'messageType', data: $someJSON }
   sendJson(ws,payload) {
-    ws.send(JSON.stringify(payload));
+    return new Promise( (resolve,reject) => {
+      ws.send(JSON.stringify(payload), (err) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve();
+        }
+      });
+    })
   }
 
 }
@@ -72,15 +87,14 @@ function normalizePort(val) {
 class WebSocketJSONClient extends EventEmitter {
   constructor(options) {
     super();
-    const sAction = WebSocketJSONClient.name + '.constructor';
-    const sSocketUrl = options.socketUrl;
-    const sToken     = options.token;
-    this.ws = new WebSocket(sSocketUrl,{
-      headers : {
-        token: sToken
-      }
-    });
+    const sAction  = WebSocketJSONClient.name + '.constructor';
+    this.socketUrl = options.socketUrl;
+    this.token     = options.token;
+    this.connectAndListen();
+  }
 
+  listeners() {
+    const sAction = WebSocketJSONClient.name + '.listeners';
     this.ws.on('open', () => {
       this.emit('open');
     })
@@ -106,15 +120,37 @@ class WebSocketJSONClient extends EventEmitter {
     this.ws.on('close', () => {
       // reconnect and override ws
       setTimeout( () => {
-        this.ws = new WebSocketJSONClient({ socketUrl: sSocketUrl, token: sToken });
-      },10000)
+        try {
+          this.connectAndListen();
+        }
+        catch(err) {
+          console.error({ action: sAction + '.on.close.reconnect.err', err:err });
+        }
+      },2000)
     })
+  }
 
+  connectAndListen() {
+    this.ws = new WebSocket(this.socketUrl,{
+      headers : {
+        token: this.token
+      }
+    })
+    this.listeners();     
   }
 
   // payload format: { type: 'messageType', data: $someJSON }
   sendJson(payload) {
-    this.ws.send(JSON.stringify(payload))
+    return new Promise( (resolve,reject) => {
+      this.ws.send(JSON.stringify(payload), (err) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve();
+        }
+      });
+    });
   }
 
 }
