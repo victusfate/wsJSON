@@ -129,3 +129,21 @@ createSocketClient(sToken)
   console.error({ action: 'createSocketClient.err', err:err });
 })
 
+// reconnect, TBD determine criteria for socket reconnect, error or close sounds good 
+// var reconnectInterval = x * 1000 * 60; 
+// var ws; var connect = function(){ 
+//   ws = new WebSocket('ws://localhost'); 
+//   ws.on('open', function() { 
+//     console.log('socket open'); 
+//   }); 
+//   ws.on('error', function() { 
+//     console.log('socket error');
+//     setTimeout(connect, reconnectInterval);  
+//   }); 
+//   ws.on('close', function() { 
+//     console.log('socket close'); 
+//     setTimeout(connect, reconnectInterval); 
+//   }); 
+// }; 
+// connect();
+
