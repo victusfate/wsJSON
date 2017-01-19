@@ -1,0 +1,15 @@
+{
+  "name": "wsJson",
+  "version": "1.0.0",
+  "description": "light wrapper around ws for sending and receiving JSON objects, and reconnection",
+  "main": "index.js",
+  "repository": "https://github.com/victusfate/wsJson.git",
+  "author": "victusfate",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^1.1.1"
+  },
+  "devDependencies": {
+    "jsonwebtoken": "^7.2.1"
+  }
+}
