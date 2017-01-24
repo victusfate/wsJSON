@@ -1,11 +1,11 @@
 'use strict';
 
 // some auth with jwt
+const url             = require('url');
 const jwt             = require('jsonwebtoken');
 const secret          = 'someSharedSecret'; 
 const port            = 3000;
 const sSocketUrl      = `ws://localhost:${port}`
-const url             = require('url');
 
 const createToken = (options) => {
   const sAction = 'createToken';
@@ -68,7 +68,7 @@ srv.listen(port, () => {
   io.on('connection', socket => {
     console.log({ action: sAction + '.on.connection' });
     socket.on('foo', data => {
-      console.log({ action: sAction + '.on.message', data: data });
+      console.log({ action: sAction + '.on.foo', data: data });
       const eventType = sAction + '.socket.on.connection.send';
       socket.emit('bar', { type: eventType, data: `server sending date ${Date.now()}` })
     });
