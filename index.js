@@ -18,8 +18,9 @@ function normalizePort(val) {
   return false;
 }
 
-// went composition vs inheritance
-// class WebSocketJSONServer extends WebSocketServer {
+  // went composition vs inheritance
+  // emits: connection, messageJson, and error
+  // class WebSocketJSONServer extends WebSocketServer {
   class WebSocketJSONServer extends EventEmitter {
   constructor(options) {
     super();
@@ -51,8 +52,8 @@ function normalizePort(val) {
         let oParsed;
         try {
           oParsed = JSON.parse(data);
-          console.log({ action: sAction + '.ws.on.message', data: data, oParsed: oParsed })
-          this.emit('messageJSON',oParsed);
+          // console.log({ action: sAction + '.ws.on.message', data: data, oParsed: oParsed })
+          this.emit('messageJson',oParsed);
         }
         catch (err) {
           console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
@@ -69,7 +70,7 @@ function normalizePort(val) {
 
     this.wss.on('error', (err) => {
       console.error({ action: sAction + '.wss.err', err: err, stack: err.stack });
-      this.emit('error');
+      this.emit('error', err);
     })
 
   }
@@ -91,6 +92,7 @@ function normalizePort(val) {
 }
 
 // went composition vs inheritance to make reconnection easier
+// emits: open, messageJson, and error
 // class WebSocketJSONClient extends WebSocket {
 class WebSocketJSONClient extends EventEmitter {
   constructor(options) {
@@ -112,8 +114,8 @@ class WebSocketJSONClient extends EventEmitter {
       // flags.masked will be set if the data was masked.
       try {
         let oParsed = JSON.parse(data);
-        console.log({ action: sAction + '.ws.on.message', data: data, json: oParsed });
-        this.emit('messageJSON',oParsed);
+        // console.log({ action: sAction + '.ws.on.message', data: data, json: oParsed });
+        this.emit('messageJson',oParsed);
       }
       catch (err) {
         console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
@@ -123,6 +125,7 @@ class WebSocketJSONClient extends EventEmitter {
 
     this.ws.on('error', (err) => {
       console.error({ action: sAction + '.ws.client.err', err:err });
+      this.emit('error', err);
     })
 
     this.ws.on('close', () => {

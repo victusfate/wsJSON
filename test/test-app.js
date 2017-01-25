@@ -59,11 +59,25 @@ const handleRequest   = function(req,res) {
   res.end('aok');
 }
 const server          = http.createServer(handleRequest).listen(port);
-const wss = new wsJson.WebSocketJSONServer({ server: server, verifyClient: verifyClient });
-wss.on('messageJson', (data) => {
+const wss             = new wsJson.WebSocketJSONServer({ server: server, verifyClient: verifyClient });
+
+
+// function patchEmitter(emitter) {
+//   const oldEmit = emitter.emit;
+
+//   emitter.emit = function() {
+//     const emitArgs = arguments;
+//     console.log('wss emitted args',arguments)
+//     oldEmit.apply(emitter, arguments);
+//   }
+// }
+
+// patchEmitter(wss)
+
+
+wss.on('messageJson', data => {
   console.log({ action: 'wss.messageJson', data: data })
 })
-
 
 /*
 // if you want to test server and client together
