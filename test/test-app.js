@@ -1,13 +1,14 @@
 'use strict';
 
-const wsJson = require('../index');
-
+const wsJson          = require('../index');
+const http            = require('http');
 
 // some auth with jwt
 const jwt             = require('jsonwebtoken');
 const secret          = 'someSharedSecret'; 
 const port            = 3000;
 const sSocketUrl      = `ws://localhost:${port}`
+
 
 const createToken = (options) => {
   const sAction = 'createToken';
@@ -52,7 +53,13 @@ const verifyClient = (info, cb) => {
 
 let sToken = createToken();
 
-const wss = new wsJson.WebSocketJSONServer({ port: port, verifyClient: verifyClient });
+// const wss = new wsJson.WebSocketJSONServer({ port: port, verifyClient: verifyClient });
+
+const handleRequest   = function(req,res) {
+  res.end('aok');
+}
+const server          = http.createServer(handleRequest).listen(port);
+const wss = new wsJson.WebSocketJSONServer({ server: server, verifyClient: verifyClient });
 wss.on('messageJson', (data) => {
   console.log({ action: 'wss.messageJson', data: data })
 })

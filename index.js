@@ -30,10 +30,18 @@ function normalizePort(val) {
       port = normalizePort(process.env.PORT || '3000');
     }
     let verifyClient = options.verifyClient;
-    let oWebSocketServerOptions = { port: port };
+    let server       = options.server;
+    let oWebSocketServerOptions = {};
+    if (server) {
+      oWebSocketServerOptions.server = server;
+    }
+    else {
+      oWebSocketServerOptions.port = port;
+    }
     if (verifyClient != null) {
       oWebSocketServerOptions.verifyClient = verifyClient;
     }
+
     this.wss = new WebSocketServer(oWebSocketServerOptions);
 
     this.wss.on('connection', (ws) => {
@@ -60,8 +68,8 @@ function normalizePort(val) {
     });
 
     this.wss.on('error', (err) => {
+      console.error({ action: sAction + '.wss.err', err: err, stack: err.stack });
       this.emit('error');
-      console.error({ action: sAction + '.wss.err', err: err });
     })
 
   }
