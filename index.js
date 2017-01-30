@@ -53,13 +53,13 @@ function normalizePort(val) {
         try {
           oParsed = JSON.parse(data);
           // console.log({ action: sAction + '.ws.on.message', data: data, oParsed: oParsed })
-          this.emit('messageJson',oParsed);
+          this.emit('messageJson',{ ws: ws, data: oParsed });
         }
         catch (err) {
           console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
         }
       });
-      this.sendJson(ws,{ type: sAction + '.ws.on.connection.send', data: `server sending date ${Date.now()}` })
+      this.sendJson(ws,{ type: sAction + '.ws.on.connection.send.date', data: Date.now() })
       .then( () => {
         // send success
       })

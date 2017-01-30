@@ -75,7 +75,9 @@ const wss             = new wsJson.WebSocketJSONServer({ server: server, verifyC
 // patchEmitter(wss)
 
 
-wss.on('messageJson', data => {
+wss.on('messageJson', options => {
+  const ws = options.ws;
+  const data = options.data;
   console.log({ action: 'wss.messageJson', data: data })
 })
 
