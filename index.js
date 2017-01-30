@@ -2,8 +2,8 @@
 
 const WebSocket       = require('ws');
 const WebSocketServer = WebSocket.Server;
-
 const EventEmitter    = require('events');
+const crypto          = require('crypto');
 
 function normalizePort(val) {
   let port = parseInt(val, 10);
@@ -18,10 +18,15 @@ function normalizePort(val) {
   return false;
 }
 
-  // went composition vs inheritance
-  // emits: connection, messageJson, and error
-  // class WebSocketJSONServer extends WebSocketServer {
-  class WebSocketJSONServer extends EventEmitter {
+const hash = oData => {
+  let sha256 = crypto.createHash('sha256');
+  return sha256.update(JSON.stringify(oData)).digest('hex');
+}
+
+// went composition vs inheritance
+// emits: connection, messageJson, and error
+// class WebSocketJSONServer extends WebSocketServer {
+class WebSocketJSONServer extends EventEmitter {
   constructor(options) {
     super();
     const sAction = WebSocketJSONServer.name + '.constructor';
@@ -45,9 +50,24 @@ function normalizePort(val) {
 
     this.wss = new WebSocketServer(oWebSocketServerOptions);
 
-    this.wss.on('connection', (ws) => {
+    this.wss.on('connection', ws => {
+
+      // ensure emitted vanilla ws websocket has a sendJson method
+      ws.sendJson = (payload) => {
+        return new Promise( (resolve,reject) => {
+          ws.send(JSON.stringify(payload), err => {
+            if (err) {
+              reject(err);
+            }
+            else {
+              resolve();
+            }
+          });
+        });
+      }
+
       this.emit('connection');
-      ws.on('message', (data) => {
+      ws.on('message', data => {
 
         let oParsed;
         try {
@@ -59,7 +79,8 @@ function normalizePort(val) {
           console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
         }
       });
-      this.sendJson(ws,{ type: sAction + '.ws.on.connection.send.date', data: Date.now() })
+      let oSend   = { type: sAction + '.ws.on.connection.send.date', data: Date.now() };
+      this.sendJson(ws,oSend)
       .then( () => {
         // send success
       })
@@ -115,7 +136,15 @@ class WebSocketJSONClient extends EventEmitter {
       try {
         let oParsed = JSON.parse(data);
         // console.log({ action: sAction + '.ws.on.message', data: data, json: oParsed });
-        this.emit('messageJson',oParsed);
+
+        // emit all received messages as messageJson
+        this.emit('messageJson',oParsed); 
+
+        // emit hash if provided
+        if (typeof oParsed.hash === 'string' && oParsed.hash.length > 0) { 
+          // console.log('emitting a parsed.hash',oParsed.hash)
+          this.emit(oParsed.hash, oParsed);
+        }
       }
       catch (err) {
         console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
@@ -150,7 +179,7 @@ class WebSocketJSONClient extends EventEmitter {
     this.listeners();     
   }
 
-  // payload format: { type: 'messageType', data: $someJSON }
+  // payload format: { type: 'messageType', data: $someJSON, hash: on request hash of data, on response hash of request data }
   sendJson(payload) {
     return new Promise( (resolve,reject) => {
       this.ws.send(JSON.stringify(payload), (err) => {
@@ -168,5 +197,6 @@ class WebSocketJSONClient extends EventEmitter {
 
 module.exports = {
   WebSocketJSONServer : WebSocketJSONServer,
-  WebSocketJSONClient : WebSocketJSONClient
+  WebSocketJSONClient : WebSocketJSONClient,
+  hash                : hash
 }

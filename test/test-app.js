@@ -79,6 +79,11 @@ wss.on('messageJson', options => {
   const ws = options.ws;
   const data = options.data;
   console.log({ action: 'wss.messageJson', data: data })
+  const oResponse = { type: data.type + '.received', data: { date: Date.now() }, hash: data.hash};
+  ws.sendJson(oResponse)
+  .then( () => {
+    console.log({ action: 'response sent', hash: data.hash });
+  })
 })
 
 /*
