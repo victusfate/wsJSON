@@ -53,7 +53,7 @@ class WebSocketJSONServer extends EventEmitter {
     this.wss.on('connection', ws => {
 
       // ensure emitted vanilla ws websocket has a sendJson method
-      ws.sendJson = (payload) => {
+      ws.sendJson = payload => {
         return new Promise( (resolve,reject) => {
           ws.send(JSON.stringify(payload), err => {
             if (err) {
@@ -80,7 +80,7 @@ class WebSocketJSONServer extends EventEmitter {
         }
       });
       let oSend   = { type: sAction + '.ws.on.connection.send.date', data: Date.now() };
-      this.sendJson(ws,oSend)
+      ws.sendJson(oSend)
       .then( () => {
         // send success
       })
