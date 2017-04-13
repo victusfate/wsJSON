@@ -69,12 +69,13 @@ class WebSocketJSONServer extends EventEmitter {
       }
 
       this.emit('connection');
-      ws.on('message', data => {
+      ws.on('message', (data,flags) => {
+
+        // console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
 
         let oParsed;
         try {
           oParsed = JSON.parse(data);
-          // console.log({ action: sAction + '.ws.on.message', data: data, oParsed: oParsed })
           this.emit('messageJson',{ ws: ws, data: oParsed });
         }
         catch (err) {
@@ -135,6 +136,9 @@ class WebSocketJSONClient extends EventEmitter {
     this.ws.on('message', (data, flags) => {
       // flags.binary will be set if a binary data is received.
       // flags.masked will be set if the data was masked.
+
+      // console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
+      
       try {
         let oParsed = JSON.parse(data);
         // console.log({ action: sAction + '.ws.on.message', data: data, json: oParsed });
