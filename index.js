@@ -37,7 +37,9 @@ class WebSocketJSONServer extends EventEmitter {
     }
     let verifyClient = options.verifyClient;
     let server       = options.server;
-    let oWebSocketServerOptions = {};
+    let oWebSocketServerOptions = {
+      perMessageDeflate: false
+    };
     if (server) {
       oWebSocketServerOptions.server = server;
     }
