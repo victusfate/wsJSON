@@ -18,10 +18,26 @@ function normalizePort(val) {
   return false;
 }
 
-const hash = oData => {
-  let sha256 = crypto.createHash('sha256');
-  return sha256.update(JSON.stringify(oData)).digest('hex');
+
+const sha1 = (data) => {
+  if (typeof data === 'string' || Buffer.isBuffer(data)) {
+    return crypto.createHash('sha1').update(data).digest('hex')    
+  }
+  else {
+    return crypto.createHash('sha1').update(JSON.stringify(data)).digest('hex')        
+  }
 }
+
+const sha256 = (data) => {
+  if (typeof data === 'string' || Buffer.isBuffer(data)) {
+    return crypto.createHash('sha256').update(data).digest('hex')    
+  }
+  else {
+    return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex')        
+  }
+}
+
+const hash = sha1
 
 // went composition vs inheritance
 // emits: connection, messageJson, and error
@@ -204,5 +220,7 @@ class WebSocketJSONClient extends EventEmitter {
 module.exports = {
   WebSocketJSONServer : WebSocketJSONServer,
   WebSocketJSONClient : WebSocketJSONClient,
-  hash                : hash
+  hash                : hash,
+  sha1                : sha1,
+  sha256              : sha256
 }
