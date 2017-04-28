@@ -4,6 +4,7 @@ const WebSocket       = require('ws');
 const WebSocketServer = WebSocket.Server;
 const EventEmitter    = require('events');
 const crypto          = require('crypto');
+const uuid            = require('uuid');
 
 function normalizePort(val) {
   let port = parseInt(val, 10);
@@ -37,7 +38,7 @@ const sha256 = (data) => {
   }
 }
 
-const hash = sha1
+const hash = uuid
 
 // went composition vs inheritance
 // emits: connection, messageJson, and error
