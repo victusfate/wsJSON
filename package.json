@@ -11,6 +11,7 @@
     "ws": "^1.1.1"
   },
   "devDependencies": {
+    "uws": "^0.14.5",
     "jsonwebtoken": "^7.2.1",
     "primus": "^6.0.8",
     "socket.io": "^1.7.2"

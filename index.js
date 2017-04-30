@@ -1,6 +1,7 @@
 'use strict';
 
 const WebSocket       = require('ws');
+// const WebSocket       = require('uws');  // bindings https://github.com/uWebSockets/bindings/blob/master/nodejs/examples/echo.js
 const WebSocketServer = WebSocket.Server;
 const EventEmitter    = require('events');
 const crypto          = require('crypto');
@@ -86,8 +87,9 @@ class WebSocketJSONServer extends EventEmitter {
       }
 
       this.emit('connection');
-      ws.on('message', (data,flags) => {
 
+      // used for ws
+      function onMessage(data,flags) {
         // console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
 
         let oParsed;
@@ -98,7 +100,31 @@ class WebSocketJSONServer extends EventEmitter {
         catch (err) {
           console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
         }
-      });
+      }
+      ws.on('message', onMessage.bind(this));
+
+      // used for uws
+      // function onMessage(message) {
+      //   // console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
+
+      //   let oParsed;
+      //   try {
+      //     oParsed = JSON.parse(message);
+      //     this.emit('messageJson',{ ws: ws, data: oParsed });
+      //   }
+      //   catch (err) {
+      //     console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
+      //   }
+      // }        
+
+      // // from https://github.com/uWebSockets/bindings/blob/master/nodejs/examples/echo.js
+      // // warning: never attach anonymous functions to the socket!
+      // // that will majorly harm scalability since the scope of this
+      // // context will be taken hostage and never released causing major
+      // // memory usage increases compared to having the function created
+      // // outside of this context (1.2 GB vs 781 MB for 1 million connections)
+      // ws.on('message', onMessage.bind(this));
+      
       let oSend   = { type: sAction + '.ws.on.connection.send.date', data: Date.now() };
       ws.sendJson(oSend)
       .then( () => {
@@ -108,6 +134,7 @@ class WebSocketJSONServer extends EventEmitter {
         console.error({ action: sAction + '.ws.on.connection.send.err', err: err })
       })
     });
+
 
     this.wss.on('error', (err) => {
       console.error({ action: sAction + '.wss.err', err: err, stack: err.stack });
@@ -180,7 +207,8 @@ class WebSocketJSONClient extends EventEmitter {
       this.emit('error', err);
     })
 
-    this.ws.on('close', () => {
+    this.ws.on('close', () => { // ws interface
+    // this.ws.on('close', (code, message) => { // uws interface
       // reconnect and override ws
       setTimeout( () => {
         try {
@@ -193,6 +221,7 @@ class WebSocketJSONClient extends EventEmitter {
     })
   }
 
+  // uws doesn't support passed headers yet https://github.com/uWebSockets/bindings/issues/4
   connectAndListen() {
     this.ws = new WebSocket(this.socketUrl,{
       headers : {

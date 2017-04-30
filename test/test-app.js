@@ -7,7 +7,6 @@ const http            = require('http');
 const jwt             = require('jsonwebtoken');
 const secret          = 'someSharedSecret'; 
 const port            = 3000;
-const sSocketUrl      = `ws://localhost:${port}`
 
 
 const createToken = (options) => {
@@ -35,6 +34,7 @@ const validateToken = (sToken) => {
 
 const verifyClient = (info, cb) => {
   const sAction = 'verifyClient';
+  // console.log({ info_req: info.req })
   let token = info.req.headers.token;
   // console.log({ action: sAction, token: token })
   if (!token) {
@@ -58,10 +58,12 @@ let sToken = createToken();
 const handleRequest   = function(req,res) {
   res.end('aok');
 }
+
 const server          = http.createServer(handleRequest).listen(port);
 const wss             = new wsJson.WebSocketJSONServer({ server: server, verifyClient: verifyClient });
 
 
+// for debugging
 // function patchEmitter(emitter) {
 //   const oldEmit = emitter.emit;
 
@@ -86,7 +88,6 @@ wss.on('messageJson', options => {
   })
 })
 
-/*
-// if you want to test server and client together
-require('./test-client')
-*/
+
+// // if you want to test server and client together
+// require('./test-client')

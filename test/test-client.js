@@ -23,21 +23,14 @@ let sToken = createToken();
 
 const ws = new WebSocketJSONClient({ socketUrl: sSocketUrl, token: sToken });
 
-// function patchEmitter(emitter) {
-//   const oldEmit = emitter.emit;
-
-//   emitter.emit = function() {
-//     const emitArgs = arguments;
-//     console.log('socket emitted args',arguments)
-//     oldEmit.apply(emitter, arguments);
-//   }
-// }
-
-// patchEmitter(ws)
 
 ws.on('open', () => {
-  console.log({ action: 'ws.on' });
+  console.log({ action: 'ws.on.open' });
 })
+
+ws.on('error', (err) => {
+  console.error({ action: 'ws.on.error', err: err });
+});
 
 // ws.on('messageJson', data => {
 //   console.log({ action: 'ws.messageJson', data: data });
