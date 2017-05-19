@@ -70,7 +70,23 @@ class WebSocketJSONServer extends EventEmitter {
 
     this.wss = new WebSocketServer(oWebSocketServerOptions);
 
+    // use ping to close out idle connections
+    const interval = setInterval( () => {
+      this.wss.clients.forEach( (ws) => {
+        if (ws.isAlive === false) {
+          console.log({ action: sAction + '.terminating.idle.client', upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
+          return ws.terminate();
+        }
+        ws.isAlive = false;
+        ws.ping('', false, true);
+      });
+    }, 30000);
+
     this.wss.on('connection', ws => {
+      ws.isAlive = true;
+      ws.on('pong', () => { 
+        ws.isAlive = true;
+      });
 
       // ensure emitted vanilla ws websocket has a sendJson method
       ws.sendJson = payload => {
