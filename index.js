@@ -106,7 +106,7 @@ class WebSocketJSONServer extends EventEmitter {
 
       // used for ws
       function onMessage(data,flags) {
-        // console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
+        console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
 
         let oParsed;
         try {
