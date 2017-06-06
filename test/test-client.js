@@ -45,7 +45,8 @@ setInterval( () => {
     console.log({ action: 'ws.messageJson.hash', hash:sHash, data: data });
   });
 
-  ws.sendJson(oSend)
+  ws.send(new Buffer('someBinary'))
+  // ws.sendJson(oSend)
   .then( () => {
     // wss will emit a typeHash concatentated message
   })

@@ -105,8 +105,11 @@ class WebSocketJSONServer extends EventEmitter {
       this.emit('connection');
 
       // used for ws
-      function onMessage(data,flags) {
-        console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
+      function onMessage(rawData,flags) {
+        console.log({ action: sAction + '.ws.on.message', data: rawData, flags: flags })
+
+        // support binary data
+        let data = flags && flags.binary === true && Buffer.isBuffer(rawData) ? rawData.toString('utf8') : rawData;
 
         let oParsed;
         try {
@@ -251,6 +254,19 @@ class WebSocketJSONClient extends EventEmitter {
   sendJson(payload) {
     return new Promise( (resolve,reject) => {
       this.ws.send(JSON.stringify(payload), (err) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  send(payload) {
+    return new Promise( (resolve,reject) => {
+      this.ws.send(payload, (err) => {
         if (err) {
           reject(err);
         }
