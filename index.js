@@ -106,7 +106,7 @@ class WebSocketJSONServer extends EventEmitter {
 
       // used for ws
       function onMessage(rawData,flags) {
-        console.log({ action: sAction + '.ws.on.message', data: rawData, flags: flags })
+        // console.log({ action: sAction + '.ws.on.message', data: rawData, flags: flags })
 
         // support binary data
         let data = flags && flags.binary === true && Buffer.isBuffer(rawData) ? rawData.toString('utf8') : rawData;
