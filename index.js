@@ -82,11 +82,12 @@ class WebSocketJSONServer extends EventEmitter {
       });
     }, 30000);
 
-    this.wss.on('connection', ws => {
+    this.wss.on('connection', (ws,data) => {
       ws.isAlive = true;
       ws.on('pong', () => { 
         ws.isAlive = true;
       });
+      ws.upgradeReq = data;
 
       // ensure emitted vanilla ws websocket has a sendJson method
       ws.sendJson = payload => {
@@ -199,7 +200,7 @@ class WebSocketJSONServer extends EventEmitter {
 
     let aPromises = [];
     this.wss.clients.forEach( ws => {      
-      aPromises.push(sendReturnError(ws,oJsonPayload));
+      aPromises.push(sendReturnError(ws,sJsonPayload));
     });
     return Promise.all(aPromises);    
   }
