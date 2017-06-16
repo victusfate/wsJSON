@@ -158,8 +158,7 @@ class WebSocketJSONServer extends EventEmitter {
     this.wss.on('error', (err) => {
       console.error({ action: sAction + '.wss.err', err: err, stack: err.stack });
       this.emit('error', err);
-    })
-
+    });
   }
 
   send(ws,payload) {
@@ -203,6 +202,10 @@ class WebSocketJSONServer extends EventEmitter {
       aPromises.push(sendReturnError(ws,oJsonPayload));
     });
     return Promise.all(aPromises);    
+  }
+
+  close() {
+    this.wss.close();
   }
 }
 
