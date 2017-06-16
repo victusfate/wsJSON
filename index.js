@@ -162,10 +162,9 @@ class WebSocketJSONServer extends EventEmitter {
 
   }
 
-  // payload format: { type: 'messageType', data: $someJSON }
-  sendJson(ws,payload) {
+  send(ws,payload) {
     return new Promise( (resolve,reject) => {
-      ws.send(JSON.stringify(payload), (err) => {
+      ws.send(payload, (err) => {
         if (err) {
           reject(err);
         }
@@ -176,6 +175,35 @@ class WebSocketJSONServer extends EventEmitter {
     })
   }
 
+
+  // payload format: { type: 'messageType', data: $someJSON }
+  sendJson(ws,payload) {
+    return this.send(ws,JSON.stringify(payload));
+  }
+
+
+  broadcastJson(payload) {
+    const oJsonPayload = JSON.stringify(payload);
+
+    const sendReturnError = (ws,payload) => {
+      return new Promise( (resolve,reject) => {
+        ws.send(payload, (err) => {
+          if (err) {
+            resolve(err);
+          }
+          else {
+            resolve();
+          }
+        });
+      })
+    }
+
+    let aPromises = [];
+    this.wss.clients.forEach( ws => {      
+      aPromises.push(sendReturnError(ws,oJsonPayload));
+    });
+    return Promise.all(aPromises);    
+  }
 }
 
 // went composition vs inheritance to make reconnection easier

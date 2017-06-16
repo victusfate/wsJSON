@@ -76,7 +76,6 @@ const wss             = new wsJson.WebSocketJSONServer({ server: server, verifyC
 
 // patchEmitter(wss)
 
-
 const idFromSocket = (ws) => {
   return ws && ws.upgradeReq && ws.upgradeReq.decoded ? ws.upgradeReq.decoded.socketId : null;
 }
@@ -84,16 +83,17 @@ const idFromSocket = (ws) => {
 wss.on('messageJson', options => {
   const ws        = options.ws;
   const data      = options.data;
-  const socketId  = idFromSocket(ws);
+  const socketId  = idFromSocket(ws);  
+  console.log({ action: 'wss.messageJson', data: data })
 
   console.log({ action: 'wss.messageJson', socketId: socketId, data: data })
-  const oResponse = { type: data.type + '.received', data: { from: socketId, date: Date.now() }, hash: data.hash};
-  ws.sendJson(oResponse)
+  const oBroadcast = { type: data.type + '.broadcast', data: { from: socketId, date: Date.now() }, hash: data.hash};
+  wss.broadcastJson(oBroadcast)
   .then( () => {
-    console.log({ action: 'response sent', hash: data.hash });
+    console.log({ action: 'response broadcasted', hash: data.hash });
   })
   .catch( err => {
-    console.error({ action: 'ws.sendJson.err', err:err })
+    console.error({ action: 'ws.broadcastJson.err', err:err })
   })
 })
 
