@@ -183,7 +183,7 @@ class WebSocketJSONServer extends EventEmitter {
 
 
   broadcastJson(payload) {
-    const oJsonPayload = JSON.stringify(payload);
+    const sJsonPayload = JSON.stringify(payload);
 
     const sendReturnError = (ws,payload) => {
       return new Promise( (resolve,reject) => {
