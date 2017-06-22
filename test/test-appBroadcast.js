@@ -60,7 +60,10 @@ const handleRequest   = function(req,res) {
 }
 
 const server          = http.createServer(handleRequest).listen(port);
-const wss             = new wsJson.WebSocketJSONServer({ server: server, verifyClient: verifyClient });
+const fSocketClose    = function(ws) { 
+  console.log({ action: 'fSocketClose', upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null }) 
+}
+const wss             = new wsJson.WebSocketJSONServer({ server: server, verifyClient: verifyClient, fSocketClose: fSocketClose });
 
 
 // for debugging

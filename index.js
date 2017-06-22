@@ -55,6 +55,8 @@ class WebSocketJSONServer extends EventEmitter {
     }
     let verifyClient = options.verifyClient;
     let server       = options.server;
+    let fSocketClose = typeof options.fSocketClose === 'function' ? options.fSocketClose : null;
+
     let oWebSocketServerOptions = {
       perMessageDeflate: false
     };
@@ -75,6 +77,9 @@ class WebSocketJSONServer extends EventEmitter {
       this.wss.clients.forEach( (ws) => {
         if (ws.isAlive === false) {
           console.log({ action: sAction + '.terminating.idle.client', upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
+          if (fSocketClose) {
+            fSocketClose(ws);
+          }
           return ws.terminate();
         }
         ws.isAlive = false;
