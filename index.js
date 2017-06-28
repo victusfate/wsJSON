@@ -123,8 +123,8 @@ class WebSocketJSONServer extends EventEmitter {
           this.emit('messageJson',{ ws: ws, data: oParsed });
         }
         catch (err) {
-          if (data.type === 'Buffer') {
-            console.error({ action: sAction + '.ws.on.message.Buffer.parse.err', data: data, sData: new Buffer(data.data).toString(), flags: flags, err: err})
+          if (Buffer.isBuffer(rawData)) {
+            console.error({ action: sAction + '.ws.on.message.Buffer.parse.err', data: data, sData: rawData.toString(), flags: flags, err: err})
           }
           else {
             console.error({ action: sAction + '.ws.on.message.parse.err', data: data, flags:flags, err: err})
