@@ -129,6 +129,12 @@ class WebSocketJSONServer extends EventEmitter {
           else {
             console.error({ action: sAction + '.ws.on.message.parse.err', data: data, flags:flags, err: err})
           }
+          const oError = { type: 'error', message: 'error parsing payload', data: data };
+          ws.sendJson(oError)
+          .then()
+          .catch(err => {
+            console.error({ action: sAction + '.ws.send.parse.error.err', data: data, flags:flags, err: err})
+          })
         }
       }
       ws.on('message', onMessage.bind(this));
