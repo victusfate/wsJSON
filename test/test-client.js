@@ -22,7 +22,8 @@ const createToken = (options) => {
 
 let sToken = createToken();
 
-const ws = new WebSocketJSONClient({ socketUrl: sSocketUrl, token: sToken });
+const ws = new WebSocketJSONClient({ socketUrl: sSocketUrl + `?token=${sToken}`, token: sToken });
+// const ws = new WebSocketJSONClient({ socketUrl: sSocketUrl + `?token=${sToken}` });
 
 
 ws.on('open', () => {

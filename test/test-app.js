@@ -7,6 +7,7 @@ const http            = require('http');
 const jwt             = require('jsonwebtoken');
 const secret          = 'someSharedSecret'; 
 const port            = 3000;
+const url             = require('url');
 
 
 const createToken = (options) => {
@@ -34,8 +35,11 @@ const validateToken = (sToken) => {
 
 const verifyClient = (info, cb) => {
   const sAction = 'verifyClient';
-  // console.log({ info_req: info.req })
-  let token = info.req.headers.token;
+  const oQuery = url.parse(info.req.url,true).query
+  const sBackupToken = oQuery ? oQuery.token : null;
+  console.log({ info_req: info.req.url, sBackupToken: sBackupToken })
+
+  let token = info.req.headers.token || sBackupToken;
   // console.log({ action: sAction, token: token })
   if (!token) {
     cb(false, 403, 'Unauthorized')
