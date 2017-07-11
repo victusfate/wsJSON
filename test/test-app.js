@@ -90,7 +90,7 @@ wss.on('messageJson', options => {
   const data      = options.data;
   const socketId  = idFromSocket(ws);
 
-  console.log({ action: 'wss.messageJson', socketId: socketId, data: data })
+  console.log({ action: 'wss.messageJson', connectedClients: wss.connectedClients(), socketId: socketId, data: data })
   const oResponse = { type: data.type + '.received', data: { from: socketId, date: Date.now() }, hash: data.hash};
   ws.sendJson(oResponse)
   .then( () => {

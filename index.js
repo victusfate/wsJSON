@@ -232,6 +232,10 @@ class WebSocketJSONServer extends EventEmitter {
   close() {
     this.wss.close();
   }
+
+  connectedClients() {
+    return this.wss && typeof this.wss.clients.size === 'number' ? this.wss.clients.size : 0;
+  }
 }
 
 // went composition vs inheritance to make reconnection easier
