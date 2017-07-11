@@ -76,7 +76,7 @@ class WebSocketJSONServer extends EventEmitter {
     const interval = setInterval( () => {
       this.wss.clients.forEach( (ws) => {
         if (ws.isAlive === false) {
-          console.log({ action: sAction + '.terminating.idle.client', upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
+          console.info({ action: sAction + '.terminating.idle.client', upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
           if (fSocketClose) {
             fSocketClose(ws);
           }
@@ -110,6 +110,12 @@ class WebSocketJSONServer extends EventEmitter {
 
       this.emit('connection');
 
+      function onClose() {
+        if (fSocketClose) {
+          fSocketClose(ws);
+        }        
+      }
+
       // used for ws
       function onMessage(rawData,flags) {
         // console.log({ action: sAction + '.ws.on.message', data: rawData, flags: flags })
@@ -138,6 +144,8 @@ class WebSocketJSONServer extends EventEmitter {
         }
       }
       ws.on('message', onMessage.bind(this));
+
+      ws.on('close', onClose.bind(this));
 
       // used for uws
       // function onMessage(message) {
