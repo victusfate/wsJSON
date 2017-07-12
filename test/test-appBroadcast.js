@@ -87,7 +87,7 @@ wss.on('messageJson', options => {
   const ws        = options.ws;
   const data      = options.data;
   const socketId  = idFromSocket(ws);  
-  console.log({ action: 'wss.messageJson', connectedClients: wss.connectedClients(), socketId: socketId, data: data })
+  console.log({ action: 'wss.messageJson', serverId: wss.serverId, connectedClients: wss.connectedClients(), socketId: socketId, data: data })
   const oBroadcast = { type: data.type + '.broadcast', data: { from: socketId, date: Date.now() }, hash: data.hash};
   wss.broadcastJson(oBroadcast)
   .then( () => {

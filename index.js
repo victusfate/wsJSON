@@ -48,6 +48,7 @@ class WebSocketJSONServer extends EventEmitter {
   constructor(options) {
     super();
     const sAction = WebSocketJSONServer.name + '.constructor';
+    this.serverId = uuid();
 
     let port = options.port;
     if (typeof port !== 'number') {
@@ -76,7 +77,7 @@ class WebSocketJSONServer extends EventEmitter {
     const interval = setInterval( () => {
       this.wss.clients.forEach( (ws) => {
         if (ws.isAlive === false) {
-          console.info({ action: sAction + '.terminating.idle.client', upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
+          console.info({ action: sAction + '.terminating.idle.client', serverId: this.serverId, upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
           if (fSocketClose) {
             fSocketClose(ws);
           }
@@ -88,7 +89,7 @@ class WebSocketJSONServer extends EventEmitter {
     }, 30000);
 
     this.wss.on('connection', (ws,data) => {
-      console.info({ action: sAction + '.on.connection', connectedClients: this.connectedClients() })
+      console.info({ action: sAction + '.on.connection', serverId: this.serverId, connectedClients: this.connectedClients() })
       ws.isAlive = true;
       ws.on('pong', () => { 
         ws.isAlive = true;
