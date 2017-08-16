@@ -22,9 +22,10 @@ const createToken = (options) => {
 
 let sToken = createToken();
 
-const ws = new WebSocketJSONClient({ socketUrl: sSocketUrl + `?token=${sToken}`, token: sToken });
+const ws = new WebSocketJSONClient({ socketUrl: sSocketUrl + `?token=${sToken}`, token: sToken, bReconnect: false });
 // const ws = new WebSocketJSONClient({ socketUrl: sSocketUrl + `?token=${sToken}` });
 
+let interval = null
 
 ws.on('open', () => {
   console.log({ action: 'ws.on.open' });
@@ -34,11 +35,16 @@ ws.on('error', (err) => {
   console.error({ action: 'ws.on.error', err: err });
 });
 
+ws.on('close', () => {
+  console.log({ action: 'ws.on.close' });
+  clearInterval(interval)
+})
+
 // ws.on('messageJson', data => {
 //   console.log({ action: 'ws.messageJson', data: data });
 // })    
 
-setInterval( () => {
+interval = setInterval( () => {
   let oSend       = { type: 'test', data: { some: 'info', anArray: [0,1,2,3], ts: Date.now() }};
   let sHash       = hash(oSend.data);
   oSend.hash      = sHash;

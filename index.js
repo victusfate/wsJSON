@@ -246,9 +246,10 @@ class WebSocketJSONServer extends EventEmitter {
 class WebSocketJSONClient extends EventEmitter {
   constructor(options) {
     super();
-    const sAction  = WebSocketJSONClient.name + '.constructor';
-    this.socketUrl = options.socketUrl;
-    this.token     = options.token;
+    const sAction   = WebSocketJSONClient.name + '.constructor';
+    this.socketUrl  = options.socketUrl;
+    this.token      = options.token;
+    this.bReconnect = options && typeof options.bReconnect === 'boolean' ? options.bReconnect : true
     this.connectAndListen();
   }
 
@@ -290,15 +291,18 @@ class WebSocketJSONClient extends EventEmitter {
 
     this.ws.on('close', () => { // ws interface
     // this.ws.on('close', (code, message) => { // uws interface
+      this.emit('close');
       // reconnect and override ws
-      setTimeout( () => {
-        try {
-          this.connectAndListen();
-        }
-        catch(err) {
-          console.error({ action: sAction + '.on.close.reconnect.err', err:err });
-        }
-      },2000)
+      if (this.bReconnect) {
+        setTimeout( () => {
+          try {
+            this.connectAndListen();
+          }
+          catch(err) {
+            console.error({ action: sAction + '.on.close.reconnect.err', err:err });
+          }
+        },2000)
+      }
     })
   }
 
