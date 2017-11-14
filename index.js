@@ -90,6 +90,7 @@ class WebSocketJSONServer extends EventEmitter {
 
     this.wss.on('connection', (ws,data) => {
       console.info({ action: sAction + '.on.connection', serverId: this.serverId, connectedClients: this.connectedClients() })
+      ws.connectionId = uuid()
       ws.isAlive = true;
       ws.on('pong', () => { 
         ws.isAlive = true;
