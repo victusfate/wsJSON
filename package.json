@@ -1,5 +1,5 @@
 {
-  "name": "wsjson",
+  "name": "@victusfate/wsjson",
   "version": "1.0.0",
   "description": "light wrapper around ws for sending and receiving JSON objects, and reconnection",
   "main": "index.js",
