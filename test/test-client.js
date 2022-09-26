@@ -5,6 +5,7 @@ const WebSocketJSONClient = wsJson.WebSocketJSONClient;
 const hash                = wsJson.hash;
 const uuid                = require('uuid');
 
+
 // some auth with jwt
 const jwt                 = require('jsonwebtoken');
 const secret              = 'someSharedSecret'; 
@@ -15,7 +16,7 @@ const sSocketUrl          = `ws://localhost:${port}`
 const createToken = (options) => {
   const sAction = 'createToken';
   console.log({ action: 'createToken' });
-  options = options ? options : { data: { socketId: uuid() } };
+  options = options ? options : { data: { socketId: uuid.v4() } };
   options.options = options.options ? options.options : { expiresIn: '1 hour' };
   return jwt.sign(options.data, secret, options.options);
 }

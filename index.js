@@ -6,6 +6,7 @@ const WebSocketServer = WebSocket.Server;
 const EventEmitter    = require('events');
 const crypto          = require('crypto');
 const uuid            = require('uuid');
+// import { v4 as uuidv4 } from 'uuid';
 
 function normalizePort(val) {
   let port = parseInt(val, 10);
@@ -39,7 +40,7 @@ const sha256 = (data) => {
   }
 }
 
-const hash = uuid
+const hash = uuid.v4
 
 // went composition vs inheritance
 // emits: connection, messageJson, and error
@@ -48,7 +49,7 @@ class WebSocketJSONServer extends EventEmitter {
   constructor(options) {
     super();
     const sAction = WebSocketJSONServer.name + '.constructor';
-    this.serverId = uuid();
+    this.serverId = uuid.v4();
 
     let port = options.port;
     if (typeof port !== 'number') {
