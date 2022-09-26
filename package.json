@@ -1,5 +1,5 @@
 {
-  "name": "wsJson",
+  "name": "wsjson",
   "version": "1.0.0",
   "description": "light wrapper around ws for sending and receiving JSON objects, and reconnection",
   "main": "index.js",
@@ -7,13 +7,13 @@
   "author": "victusfate",
   "license": "MIT",
   "dependencies": {
-    "uuid": "^3.0.1",
-    "ws": "^3.0.0"
+    "uuid": "^9.0.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0",
+    "ws": "^8.9.0"
   },
   "devDependencies": {
-    "jsonwebtoken": "^7.2.1",
-    "primus": "^6.0.8",
-    "socket.io": "^1.7.2",
-    "uws": "^0.14.5"
+    "jsonwebtoken": "^8.5.1",
+    "primus": "^8.0.6",
+    "socket.io": ">=2.4.0"
   }
 }
