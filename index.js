@@ -85,7 +85,7 @@ class WebSocketJSONServer extends EventEmitter {
           return ws.terminate();
         }
         ws.isAlive = false;
-        ws.ping('', false, true);
+        ws.ping();
       });
     }, 30000);
 
