@@ -1,6 +1,6 @@
 {
   "name": "@victusfate/wsjson",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "light wrapper around ws for sending and receiving JSON objects, and reconnection",
   "main": "index.js",
   "repository": "https://github.com/victusfate/wsjson.git",
