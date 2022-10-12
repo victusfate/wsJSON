@@ -8,7 +8,8 @@ const crypto          = require('crypto');
 const uuid            = require('uuid');
 // import { v4 as uuidv4 } from 'uuid';
 
-global.Buffer = global.Buffer || require('buffer').Buffer;
+// global.Buffer = global.Buffer || require('buffer/').Buffer;
+const Buffer = require('buffer/').Buffer;
 
 function normalizePort(val) {
   let port = parseInt(val, 10);
