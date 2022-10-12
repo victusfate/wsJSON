@@ -3,7 +3,7 @@
 // some auth with jwt
 const jwt             = require('jsonwebtoken');
 const secret          = 'someSharedSecret'; 
-const port            = 3000;
+const port            = 3030;
 const sSocketUrl      = `ws://localhost:${port}`
 const sHttpUrl        = `http://localhost:${port}`
 
