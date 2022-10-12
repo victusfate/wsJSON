@@ -42,7 +42,7 @@ const sha256 = (data) => {
   }
 }
 
-const hash = uuid.v5
+const hash = sha256
 
 // went composition vs inheritance
 // emits: connection, messageJson, and error
