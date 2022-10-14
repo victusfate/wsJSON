@@ -37,7 +37,7 @@ const verifyClient = (info, cb) => {
   const sAction = 'verifyClient';
   const oQuery = url.parse(info.req.url,true).query
   const sBackupToken = oQuery ? oQuery.token : null;
-  console.log({ info_req: info.req.url, sBackupToken: sBackupToken })
+  console.log({ action: sAction, info_req: info.req.url,  sBackupToken: sBackupToken })
 
   let token = info.req.headers.token || sBackupToken;
   // console.log({ action: sAction, token: token })

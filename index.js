@@ -311,12 +311,13 @@ class WebSocketJSONClient extends EventEmitter {
   }
 
   // uws doesn't support passed headers yet https://github.com/uWebSockets/bindings/issues/4
+  // also web clients don't pass headers, but do pass subprotocols
   connectAndListen() {
     this.ws = new WebSocket(this.socketUrl,{
       headers : {
         token: this.token
       }
-    })
+    });
     this.listeners();     
   }
 
