@@ -153,6 +153,11 @@ class WebSocketJSONServer extends EventEmitter {
 
       ws.on('close', onClose.bind(this));
 
+      // handle client errors
+      ws.on('error', err => {
+        console.error({ action: sAction + '.ws.on.error', err: err });
+      });
+
       // used for uws
       // function onMessage(message) {
       //   // console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
