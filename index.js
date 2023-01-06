@@ -8,6 +8,19 @@ const crypto          = require('crypto');
 const uuid            = require('uuid');
 // import { v4 as uuidv4 } from 'uuid';
 
+function log(obj)  {
+  obj['--sn'] = 'debug'
+  console.info(JSON.stringify(obj))
+}
+function loginfo(obj)  {
+  obj['--sn'] = 'info'
+  console.info(JSON.stringify(obj))
+}
+function logerror(obj)  {
+  obj['--sn'] = 'error'
+  console.info(JSON.stringify(obj))
+}
+
 global.Buffer = global.Buffer || require('buffer/').Buffer;
 // const Buffer = require('buffer/').Buffer;
 
@@ -81,7 +94,7 @@ class WebSocketJSONServer extends EventEmitter {
     const interval = setInterval( () => {
       this.wss.clients.forEach( (ws) => {
         if (ws.isAlive === false) {
-          console.info({ action: sAction + '.terminating.idle.client', serverId: this.serverId, upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
+          loginfo({ action: sAction + '.terminating.idle.client', serverId: this.serverId, upgradeReq: ws && ws.upgradeReq && ws.upgradeReq ? ws.upgradeReq.decoded : null });
           if (fSocketClose) {
             fSocketClose(ws);
           }
@@ -93,7 +106,7 @@ class WebSocketJSONServer extends EventEmitter {
     }, 30000);
 
     this.wss.on('connection', (ws,data) => {
-      console.info({ action: sAction + '.on.connection', serverId: this.serverId, connectedClients: this.connectedClients() })
+      loginfo({ action: sAction + '.on.connection', serverId: this.serverId, connectedClients: this.connectedClients() })
       ws.isAlive = true;
       ws.on('pong', () => { 
         ws.isAlive = true;
@@ -124,7 +137,7 @@ class WebSocketJSONServer extends EventEmitter {
 
       // used for ws
       function onMessage(rawData,flags) {
-        // console.log({ action: sAction + '.ws.on.message', data: rawData, flags: flags })
+        // log({ action: sAction + '.ws.on.message', data: rawData, flags: flags })
 
         // support binary data
         let data = flags && flags.binary === true && Buffer.isBuffer(rawData) ? rawData.toString('utf8') : rawData;
@@ -136,16 +149,16 @@ class WebSocketJSONServer extends EventEmitter {
         }
         catch (err) {
           if (Buffer.isBuffer(rawData)) {
-            console.error({ action: sAction + '.ws.on.message.Buffer.parse.err', data: data, sData: rawData.toString(), flags: flags, err: err})
+            logerror({ action: sAction + '.ws.on.message.Buffer.parse.err', data: data, sData: rawData.toString(), flags: flags, err: err})
           }
           else {
-            console.error({ action: sAction + '.ws.on.message.parse.err', data: data, flags:flags, err: err})
+            logerror({ action: sAction + '.ws.on.message.parse.err', data: data, flags:flags, err: err})
           }
           const oError = { type: 'error', message: 'error parsing payload', data: data };
           ws.sendJson(oError)
           .then()
           .catch(err => {
-            console.error({ action: sAction + '.ws.send.parse.error.err', data: data, flags:flags, err: err})
+            logerror({ action: sAction + '.ws.send.parse.error.err', data: data, flags:flags, err: err})
           })
         }
       }
@@ -155,12 +168,12 @@ class WebSocketJSONServer extends EventEmitter {
 
       // handle client errors
       ws.on('error', err => {
-        console.error({ action: sAction + '.ws.on.error', err: err });
+        logerror({ action: sAction + '.ws.on.error', err: err });
       });
 
       // used for uws
       // function onMessage(message) {
-      //   // console.log({ action: sAction + '.ws.on.message', data: data, flags: flags })
+      //   // log({ action: sAction + '.ws.on.message', data: data, flags: flags })
 
       //   let oParsed;
       //   try {
@@ -168,7 +181,7 @@ class WebSocketJSONServer extends EventEmitter {
       //     this.emit('messageJson',{ ws: ws, data: oParsed });
       //   }
       //   catch (err) {
-      //     console.error({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
+      //     logerror({ action: sAction + '.ws.on.message.parse.err', data: data, err: err})
       //   }
       // }        
 
@@ -186,13 +199,13 @@ class WebSocketJSONServer extends EventEmitter {
         // send success
       })
       .catch( err => {
-        console.error({ action: sAction + '.ws.on.connection.send.err', err: err })
+        logerror({ action: sAction + '.ws.on.connection.send.err', err: err })
       })
     });
 
 
     this.wss.on('error', (err) => {
-      console.error({ action: sAction + '.wss.err', err: err, stack: err.stack });
+      logerror({ action: sAction + '.wss.err', err: err, stack: err.stack });
       this.emit('error', err);
     });
   }
