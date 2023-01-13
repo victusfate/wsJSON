@@ -212,14 +212,19 @@ class WebSocketJSONServer extends EventEmitter {
 
   send(ws,payload) {
     return new Promise( (resolve,reject) => {
-      ws.send(payload, (err) => {
-        if (err) {
-          reject(err);
-        }
-        else {
-          resolve();
-        }
-      });
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(payload, (err) => {
+          if (err) {
+            reject(err);
+          }
+          else {
+            resolve();
+          }
+        });
+      }
+      else {
+        reject(new Error(`socket state not open: ${ws.readyState}`));
+      }
     })
   }
 
